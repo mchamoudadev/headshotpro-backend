@@ -1,0 +1,13 @@
+Welcome to Headshot Generator!
+
+Hi {{name}},
+
+Thank you for registering. Please verify your email address by visiting:
+{{verificationUrl}}
+
+This link will expire in 24 hours.
+
+If you didn't create an account, please ignore this email.
+
+Best regards,
+The Headshot Generator Team
