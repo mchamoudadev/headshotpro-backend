@@ -1,17 +1,22 @@
 import { Router } from "express";
-import { register } from "@/controllers";
-import { registerSchema } from "@/validators/auth.validator";
-import { validate } from "@/middleware/validation.middleware";
+import { authController } from "@/controllers";
+import { loginSchema, registerSchema, resendVerificationSchema, verifyEmailSchema } from "@/validators/auth.validator";
+
+import { authenticate, validate } from "@/middleware";
 
 const authRoute = Router();
 
 
-authRoute.post('/register', validate(registerSchema), register)
+authRoute.post('/register', validate(registerSchema), authController.register)
+authRoute.get('/verify-email', validate(verifyEmailSchema),authController.verifyEmail)
 
-authRoute.get('/logout', (req, res) => {
-    res.json({
-        message: "Logged out",
-    })
-})
+authRoute.post('/resend-verification', validate(resendVerificationSchema), authController.resendVerificationEmail)
+
+authRoute.post('/login', validate(loginSchema), authController.login)
+
+authRoute.get('/me',authenticate, authController.getCurrentUser)
+
+authRoute.post('/refresh-token', authController.refreshToken)
+
 
 export default authRoute;
