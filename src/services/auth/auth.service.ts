@@ -246,6 +246,11 @@ export class AuthService {
     };
   }
 
+  async logout(userId: string): Promise<void> {
+    // refresh token 
+    await User.findByIdAndUpdate(userId, { refreshToken: null });
+  }
+
   //  https://myaccount.google.com/apppasswords
 
   private async checkUSerExists(email: string): Promise<void> {

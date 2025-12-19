@@ -121,3 +121,22 @@ export const refreshToken = async (req: Request, res: Response) => {
 
   return successResponse(res, "Token refreshed successfully");
 };
+
+export const logout = async (req: Request, res: Response) => {
+  let token = req.cookies?.accessToken;
+  if (!token) {
+    const authHeaders = req.headers.authorization;
+
+    if (authHeaders?.startsWith("Bearer ")) {
+      token = authHeaders.substring(7);
+    }
+  }
+
+  if(token){
+    const user = await authService.logout(req.user?.userId as string);
+  }
+
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
+  return successResponse(res, "Logged out successfully");
+};
