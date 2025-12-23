@@ -14,7 +14,8 @@ router.use(authenticate);
 
 // process payment
 
-router.post('/process', paymentController.processPayment)
-
+router.post('/process', paymentController.processPayment);
+// Paymnet history
+router.get('/history', authenticate, paymentController.getPaymentHistory);
 
 export default router;

@@ -7,7 +7,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...        # Stripe webhook signing secret
 ```
 
 ## Mobile Wallets (EVC, ZAAD, SAHAL)
-```env
+```**env**
 MERCHANT_U_ID=your_merchant_id
 MERCHANT_API_KEY=your_api_key
 MERCHANT_API_USER_ID=your_api_user_id
@@ -40,4 +40,17 @@ EBIR_MERCHANT_API_END_POINT=https://ebir.api.endpoint.com
 - `EBIR_MERCHANT_API_USER_ID`
 - `EBIR_MERCHANT_API_END_POINT`
 
+**AWS:**
+- `AWS_ACCESS_KEY_ID`
+-  `AWS_SECRET_ACCESS_KEY`
+-  `AWS_BUCKET_NAME`
+-  `AWS_REGION`
+-  `AWS_VERSION` 2010-12-01
+
+**REPLICATE**
+   - `REPLICATE_API_KEY`
+
 **Total: 10 environment variables**
+
+
+

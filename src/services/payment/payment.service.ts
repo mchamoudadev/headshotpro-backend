@@ -122,7 +122,7 @@ export class PaymentService {
         message: "Payment session created successfully",
         orderId: order._id.toString(),
         sessionId: stripeSession.sessionId,
-        redirectUrl: `${config.frontendUrl}/verify-payment?session_id=${stripeSession.sessionId}`,
+        redirectUrl: stripeSession.redirectUrl,
         cancelUrl: `${config.frontendUrl}/dashboard/user/credits?status=cancel`,
         amount: order.amount,
         credits: totalCredits,
@@ -483,25 +483,25 @@ export class PaymentService {
   }
   // get payment history
 
-  async getPaymentHistory(params: {
-    userId: string;
-    limit: number;
-  }): Promise<IOrder[]> {
+  async getPaymentHistory(params: {userId: string, limit: number}): Promise<IOrder[]> {
+
     try {
       const orders = await Order.find({ user: params.userId })
       .populate("package")
       .sort({ createdAt: -1 })
       .limit(params.limit);
-  
+
       logger.info(`Payment history fetched successfully for user ${params.userId} with ${orders.length} orders`);
 
       return orders;
 
     } catch (error) {
       logger.error(`Failed to get payment history for user ${params.userId}`, error);
-      throw new AppError("Failed to get payment history", 500, "FAILED_TO_GET_PAYMENT_HISTORY");
+      throw new AppError("Failed to get payment history", 500, "INTERNAL_SERVER_ERROR");
     }
+
   }
+
 }
 
 export const paymentService = new PaymentService();

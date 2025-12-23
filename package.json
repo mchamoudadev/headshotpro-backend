@@ -13,6 +13,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0",
     "@types/nodemailer": "^7.0.4",
     "@types/stripe": "^8.0.417"
   },
@@ -20,6 +21,8 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.957.0",
+    "@aws-sdk/s3-request-presigner": "^3.957.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -30,7 +33,9 @@
     "inngest": "^3.48.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.0.1",
+    "multer": "^2.0.2",
     "nodemailer": "^7.0.11",
+    "replicate": "^1.4.0",
     "stripe": "^20.1.0",
     "winston": "^3.19.0",
     "zod": "^4.2.0"

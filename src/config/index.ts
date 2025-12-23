@@ -50,4 +50,23 @@ export const config = {
     secretKey: process.env.STRIPE_SECRET_KEY || "",
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
   },
+  // AWS configuration
+  aws: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    bucketName: process.env.AWS_BUCKET_NAME || "",
+    region: process.env.AWS_REGION || "",
+    version: process.env.AWS_VERSION || "2010-12-01",
+  },
+  // Replicate configuration
+  replicate: {
+    apiKey: process.env.REPLICATE_API_KEY || "",
+  },
+
+  // Upload configuration
+  upload: {
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedImageTypes: ["image/jpeg", "image/jpg", "image/png", "image/webp"],
+    maxStyles: 5, // Maximum number of styles per generation
+  },
 };

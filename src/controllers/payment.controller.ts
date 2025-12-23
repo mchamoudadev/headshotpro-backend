@@ -50,19 +50,24 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
   res.status(200).json({ received: true });
 };
 
-
 export const getPaymentHistory = async (req: Request, res: Response) => {
 
+
     const userId = req.user?.userId;
-    const { limit } = req.query || 10;
+
     if(!userId) {
         logger.error("User not found");
         throw new NotFoundError("User not found");
+    
     }
 
-    // call the service to get the payment history
-    const paymentHistory = await paymentService.getPaymentHistory({ userId, limit: Number(limit) });
+    const limit = req.query.limit as string || 10;
 
-    return successResponse(res, "Payment history fetched successfully", paymentHistory);
+    // call the service to get the payment history
+
+
+    const orders = await paymentService.getPaymentHistory({ userId, limit: Number(limit) });
+
+    return successResponse(res, "Payment history fetched successfully", orders);
 
 }
