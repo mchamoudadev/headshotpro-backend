@@ -1,0 +1,21 @@
+<h2>Payment Successful!</h2>
+
+<p>Hi {{name}},</p>
+
+<p>Your payment has been processed successfully and credits have been added to your account.</p>
+
+<div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+  <h3 style="margin-top: 0;">Payment Details</h3>
+  <p><strong>Order ID:</strong> {{orderId}}</p>
+  <p><strong>Amount Paid:</strong> ${{amount}}</p>
+  <p><strong>Credits Added:</strong> {{credits}} credits</p>
+  <p><strong>New Balance:</strong> {{newBalance}} credits</p>
+</div>
+
+<p>You can now use these credits to generate professional headshots!</p>
+
+<p style="text-align: center;">
+  <a href="{{dashboardUrl}}" class="button">Go to Dashboard</a>
+</p>
+
+<p class="text-muted">If you have any questions, please contact our support team.</p>

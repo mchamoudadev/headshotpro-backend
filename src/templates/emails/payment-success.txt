@@ -1,0 +1,20 @@
+Payment Successful!
+
+Hi {{name}},
+
+Your payment has been processed successfully and credits have been added to your account.
+
+Payment Details:
+- Order ID: {{orderId}}
+- Amount Paid: ${{amount}}
+- Credits Added: {{credits}} credits
+- New Balance: {{newBalance}} credits
+
+You can now use these credits to generate professional headshots!
+
+Visit your dashboard: {{dashboardUrl}}
+
+If you have any questions, please contact our support team.
+
+Best regards,
+The Headshot Generator Team

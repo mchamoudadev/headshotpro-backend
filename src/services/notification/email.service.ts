@@ -159,6 +159,34 @@ export class EmailService {
         verificationUrl: verifctaionUrl,
     })
   }
+
+  async sendPaymentSuccessEmail(
+    email: string,
+    name: string | undefined,
+    orderId: string,
+    amount: number,
+    credits: number,
+    newBalance: number
+  ): Promise<void> {
+    const dashboardUrl = `${config.frontendUrl}/dashboard/credits`;
+    
+    await this.sendTemplateEmail(
+      email,
+      'Payment Successful - Credits Added',
+      'payment-success',
+      {
+        name: name || 'there',
+        orderId,
+        amount: amount.toFixed(2),
+        credits,
+        newBalance,
+        dashboardUrl,
+      }
+    );
+  }
+
 }
+
+
 
 export const emailService = new EmailService();

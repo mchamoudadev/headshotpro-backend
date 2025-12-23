@@ -247,7 +247,7 @@ export class AuthService {
   }
 
   async logout(userId: string): Promise<void> {
-    // refresh token 
+    // refresh token
     await User.findByIdAndUpdate(userId, { refreshToken: null });
   }
 
