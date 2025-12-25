@@ -6,6 +6,7 @@ import { AppError, ValidationError } from "@/util/errors";
 export const validate = (schema: z.ZodType<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
+console.log("req.body", req.body);
       const validated = schema.parse(req.body);
 
       req.body = validated;

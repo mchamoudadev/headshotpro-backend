@@ -80,3 +80,11 @@ export const authenticate = async(req: Request, res: Response, next: NextFunctio
 
 }
 
+export const authorize = (role: UserRole) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        if(req.user?.role !== role){
+            throw new UnAuthorizedError("Unauthorized");
+        }
+        next();
+    }
+}

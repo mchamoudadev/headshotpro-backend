@@ -2,13 +2,13 @@ import { Router } from "express";
 import { authController } from "@/controllers";
 import { loginSchema, registerSchema, resendVerificationSchema, verifyEmailSchema } from "@/validators/auth.validator";
 
-import { authenticate, validate } from "@/middleware";
+import { authenticate, validate, validateQuery } from "@/middleware";
 
 const authRoute = Router();
 
 
 authRoute.post('/register', validate(registerSchema), authController.register)
-authRoute.get('/verify-email', validate(verifyEmailSchema),authController.verifyEmail)
+authRoute.get('/verify-email', validateQuery(verifyEmailSchema),authController.verifyEmail)
 
 authRoute.post('/resend-verification', validate(resendVerificationSchema), authController.resendVerificationEmail)
 

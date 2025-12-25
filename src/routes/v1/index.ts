@@ -1,13 +1,20 @@
 import { Router } from "express";
 
 
-import router from "./auth.route";
-import paymentRoute from "./payment.route";
-import headshotRoute from "./headshot.route";
+
+import AuthRouter from "./auth.routes";
+import PaymentRouter from "./payment.routes";
+import HeadshotRouter from "./headshot.routes";
+import AdminUserRouter from "./admin.user.routes";
+import AdminOrderRouter from "./admin.order.routes";
+
+const router = Router();
 
 
-router.use('/auth', router);
-router.use('/payment', paymentRoute);
-router.use('/headshots', headshotRoute);
+router.use('/auth', AuthRouter);
+router.use('/payment', PaymentRouter);
+router.use('/headshots', HeadshotRouter);
+router.use('/admin/users', AdminUserRouter);
+router.use('/admin/orders', AdminOrderRouter);
 
 export default router;
