@@ -27,9 +27,25 @@ jobs:
       - name: 🔐 Create .env file from GitHub Secrets
         run: |
           cd ${{ github.workspace }}
+          echo "Current directory: $(pwd)"
+          echo "Creating .env file..."
           echo "${{ secrets.BACKEND_ENV }}" > .env
           chmod 600 .env
-          echo "✅ .env file created successfully"
+          if [ -f .env ]; then
+            echo "✅ .env file created successfully"
+            echo "File size: $(wc -c < .env) bytes"
+            echo "File permissions: $(ls -la .env)"
+            if [ -s .env ]; then
+              echo "✅ .env file has content"
+              echo "First 3 lines of .env (for verification):"
+              head -n 3 .env
+            else
+              echo "⚠️ WARNING: .env file is EMPTY!"
+              echo "Check if BACKEND_ENV secret is set in GitHub repository settings"
+            fi
+          else
+            echo "❌ ERROR: .env file was NOT created!"
+          fi
 
 # Step 3: Install dependencies
       - name: 📦 Install dependencies with Bun
