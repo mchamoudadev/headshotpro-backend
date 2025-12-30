@@ -47,6 +47,7 @@ jobs:
       - name: 🚀 Restart Application
         run: |
           cd ${{ github.workspace }}
-          pm2 restart backend || pm2 start:prod --name backend
+          export PATH="$HOME/.bun/bin:$PATH"
+          pm2 restart backend || pm2 start dist/server.js --name backend --interpreter bun
           pm2 save
           echo "✅ Backend deployment completed successfully!"
