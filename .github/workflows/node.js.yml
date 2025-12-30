@@ -1,0 +1,52 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Headshot Pro Backend
+
+on:
+  push:
+    branches: [ "main" ]
+ 
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+         
+     # Step 1: Check out the repository
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+   # Step 2: 🔐 CREATE .env FILE FROM GITHUB SECRETS (THE MAGIC!)
+      - name: 🔐 Create .env file from GitHub Secrets
+        run: |
+          cd ${{ github.workspace }}/backend
+          echo "${{ secrets.BACKEND_ENV }}" > .env
+          chmod 600 .env
+          echo "✅ .env file created successfully"
+
+# Step 3: Install dependencies
+      - name: 📦 Install dependencies with Bun
+        run: |
+          cd ${{ github.workspace }}/backend
+          export PATH="$HOME/.bun/bin:$PATH"
+          bun install
+# Step 4: Build the project
+      - name: 🏗️ Build the project
+        run: |
+          cd ${{ github.workspace }}/backend
+          export PATH="$HOME/.bun/bin:$PATH"
+          bun run build
+ # Step 5: Restart the application
+      - name: 🚀 Restart Application
+        run: |
+          cd ${{ github.workspace }}/backend
+          pm2 restart backend || pm2 start:prod --name backend
+          pm2 save
+          echo "✅ Backend deployment completed successfully!"
