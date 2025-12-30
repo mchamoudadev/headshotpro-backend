@@ -4,6 +4,8 @@ import fs from "fs";
 
 // logs directory
 
+// colors for winston || chalk
+
 const logsDir = path.join(process.cwd(), "logs");
 
 if (!fs.existsSync(logsDir)) {

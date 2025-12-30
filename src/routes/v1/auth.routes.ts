@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authController } from "@/controllers";
 import { loginSchema, registerSchema, resendVerificationSchema, verifyEmailSchema } from "@/validators/auth.validator";
 
-import { authenticate, validate, validateQuery } from "@/middleware";
+import { authenticate, authRateLimitConfig, validate, validateQuery } from "@/middleware";
 
 const authRoute = Router();
 
@@ -12,7 +12,7 @@ authRoute.get('/verify-email', validateQuery(verifyEmailSchema),authController.v
 
 authRoute.post('/resend-verification', validate(resendVerificationSchema), authController.resendVerificationEmail)
 
-authRoute.post('/login', validate(loginSchema), authController.login)
+authRoute.post('/login', authRateLimitConfig.login, validate(loginSchema), authController.login)
 
 authRoute.get('/me',authenticate, authController.getCurrentUser)
 

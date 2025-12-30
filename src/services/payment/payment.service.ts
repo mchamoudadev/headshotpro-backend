@@ -14,6 +14,7 @@ import { stripeService } from "./stripe-service";
 import { triggerCreditAddition } from "../queue/queue.service";
 import { config } from "@/config";
 import axios from "axios";
+import { orderService } from "../orders/order.service";
 
 export class PaymentService {
   // TO_DO: Implement the stripe service
@@ -112,6 +113,8 @@ export class PaymentService {
       order.stripeSessionId = stripeSession.sessionId;
       order.status = PaymentStatus.PROCESSING;
       await order.save();
+
+      await orderService.invalidateOrdersCache();
 
       logger.info(
         `Stripe checkout session created successfully for order ${order._id.toString()}`

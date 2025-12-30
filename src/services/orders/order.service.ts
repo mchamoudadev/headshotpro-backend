@@ -2,8 +2,43 @@ import { CreditPackage, IOrder, Order, User } from "@/models";
 import { PaymentPlatform, PaymentStatus } from "@/types/payment-types";
 import { AppError } from "@/util/errors";
 import { logger } from "@/util/logger";
+import { redisCacheService } from "../redis";
 
 export class OrderService {
+  // cache key
+
+  private readonly ORDER_CACHE_TTL = 60 * 5; // 5 minutes
+
+  private getOrdersCacheKey(params: {
+    limit: number;
+    page: number;
+    status: string;
+    platform: string;
+  }): string {
+    const { limit, page, status, platform } = params;
+
+    const parts = ["orders:admin"];
+
+    if (status) parts.push(`status:${status}`);
+    if (platform) parts.push(`platform:${platform}`);
+    parts.push(`limit:${limit}`);
+    parts.push(`page:${page}`);
+    // [ 'orders:admin', 'status:completed', 'platform:mobile', 'limit:10', 'page:1' ]
+    // join with colon
+     // orders:admin:status:pending:platform:stripe:limit:10:page:1
+    return parts.join(":").toLowerCase().trim();
+  }
+
+  public async invalidateOrdersCache(): Promise<boolean> {
+    try {
+      await redisCacheService.deletePattern("orders:admin:*");
+      logger.info(`Invalidated orders cache`);
+      return true;
+    } catch (error) {
+      logger.error(`Failed to invalidate orders cache`, error);
+      return false;
+    }
+  }
 
   async getAllOrders(params: {
     limit: number;
@@ -24,6 +59,14 @@ export class OrderService {
 
       // query = { status: 'completed', platform: 'mobile' }
 
+      const cacheKey = this.getOrdersCacheKey(params);
+    
+      const cachedData = await redisCacheService.get<{orders: IOrder[],pagination:any}>(cacheKey)
+
+      if(cachedData !== null) {
+        logger.info(`Cache hit for key: ${cacheKey}`);
+        return cachedData;
+      }
       //   100
 
       //  limit  = 10
@@ -60,7 +103,9 @@ export class OrderService {
 
       // 1000/10 = 100 pages
 
-      return {
+
+
+      const result = {
         orders,
         pagination: {
           total,
@@ -68,10 +113,20 @@ export class OrderService {
           limit,
           pages: Math.ceil(total / limit),
         },
+        cached: false,
       };
+
+      await redisCacheService.set(cacheKey, result, this.ORDER_CACHE_TTL); // 5 minutes
+
+      return result;
+
     } catch (error) {
-        logger.error(`Failed to get all orders`, error);
-        throw new AppError("Failed to get all orders", 500, "FAILED_TO_GET_ALL_ORDERS");
+      logger.error(`Failed to get all orders`, error);
+      throw new AppError(
+        "Failed to get all orders",
+        500,
+        "FAILED_TO_GET_ALL_ORDERS"
+      );
     }
   }
 
@@ -80,51 +135,55 @@ export class OrderService {
     packageId: string;
     amount: number;
   }): Promise<IOrder> {
-
-
     try {
       const { userId, packageId, amount } = data;
 
+      // Verify user exists
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new AppError("User not found", 404, "USER_NOT_FOUND");
+      }
 
-         // Verify user exists
-         const user = await User.findById(userId);
-         if (!user) {
-           throw new AppError('User not found', 404, 'USER_NOT_FOUND');
-         }
-   
-         // Verify package exists
-         const creditPackage = await CreditPackage.findById(packageId);
-         if (!creditPackage) {
-           throw new AppError('Package not found', 404, 'PACKAGE_NOT_FOUND');
-         }
+      // Verify package exists
+      const creditPackage = await CreditPackage.findById(packageId);
+      if (!creditPackage) {
+        throw new AppError("Package not found", 404, "PACKAGE_NOT_FOUND");
+      }
 
+      // Create order
 
-         // Create order
-
-
-            // Create order marked as completed
+      // Create order marked as completed
       const order = await Order.create({
         user: userId,
         package: packageId,
         amount,
         credits: creditPackage.credits + (creditPackage.bonus || 0),
         platform: PaymentPlatform.LOCAL,
-        phone: 'ADMIN', // Required for LOCAL platform, placeholder for admin-created orders
+        phone: "ADMIN", // Required for LOCAL platform, placeholder for admin-created orders
         status: PaymentStatus.COMPLETED,
         creditsAdded: true,
         transactionId: `MANUAL-${Date.now()}`,
       });
 
-    //   add credits to user
-    await User.findByIdAndUpdate(userId, {$inc: {credits : order.credits}})
+      //   add credits to user
+      await User.findByIdAndUpdate(userId, {
+        $inc: { credits: order.credits },
+      });
 
-    logger.info(`Manual order created successfully for user ${userId} with package ${packageId} and amount ${amount}`);
+      await this.invalidateOrdersCache();
 
-    return order;
+      logger.info(
+        `Manual order created successfully for user ${userId} with package ${packageId} and amount ${amount}`
+      );
 
+      return order;
     } catch (error) {
-        logger.error(`Failed to create manual order`, error);
-      throw new AppError("Failed to create manual order", 500, "FAILED_TO_CREATE_MANUAL_ORDER");
+      logger.error(`Failed to create manual order`, error);
+      throw new AppError(
+        "Failed to create manual order",
+        500,
+        "FAILED_TO_CREATE_MANUAL_ORDER"
+      );
     }
   }
 }

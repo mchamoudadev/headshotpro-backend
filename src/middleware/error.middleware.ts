@@ -10,7 +10,16 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  logger.error(err.message);
+
+  logger.error(err.stack || err.message, {
+    message: err.message,
+    name: err.name,
+    stack: err.stack,
+    path: req.path,
+    method: req.method
+  });
+
+
 
   // handle operational errors
 

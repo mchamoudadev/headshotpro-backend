@@ -4,6 +4,7 @@ import { logger } from "@/util/logger";
 import { NonRetriableError } from "inngest";
 import { emailService } from "../notification";
 import { inngestClient } from "./inngest-clients";
+import { orderService } from "../orders/order.service";
 
 export interface ICreditAdditionData {
   orderId: string;
@@ -89,6 +90,8 @@ export function getCreditAdditionFunction() {
         logger.info(
           `Credits added for order ${orderId} with ${credits} credits from ${source}`
         );
+
+        await orderService.invalidateOrdersCache();
 
         return {
           success: true,

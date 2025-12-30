@@ -69,4 +69,12 @@ export const config = {
     allowedImageTypes: ["image/jpeg", "image/jpg", "image/png", "image/webp"],
     maxStyles: 5, // Maximum number of styles per generation
   },
+
+  // Redis configuration
+
+  upstash: {
+    url: process.env.UPSTASH_REDIS_REST_URL || '',
+    token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
+  },
+
 };
