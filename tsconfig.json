@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // Environment setup & latest features
     "lib": ["ESNext"],
     "target": "ESNext",
     "module": "ESNext",
@@ -12,20 +11,15 @@
       "@/*": ["./*"]
     },
     "outDir": "./dist",
-    "rootDir": "./src",
-    // Bundler mode
     "moduleResolution": "bundler",
-    // "allowImportingTsExtensions": true,
-    // "verbatimModuleSyntax": true,
-    "noEmit": false,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,  // ✅ Set back to true (we're not using compiled output)
 
-    // Best practices
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
 
-    // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false

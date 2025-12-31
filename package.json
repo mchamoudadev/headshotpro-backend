@@ -1,12 +1,12 @@
 {
   "name": "backend",
+  "module": "src/server.ts",
   "type": "module",
   "private": true,
-  "module": "src/server.ts",
   "scripts": {
     "dev": "bun --watch src/server.ts",
-    "build": "tsc && tsc-alias",
-    "start:prod": "node dist/server.js"
+    "start:prod": "bun src/server.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
