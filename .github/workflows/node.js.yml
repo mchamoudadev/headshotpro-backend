@@ -51,10 +51,20 @@ jobs:
           export PATH="$HOME/.bun/bin:$PATH"
           bun run build
       
-      # Step 6: Restart the application
+      # # Step 6: Restart the application
+      # - name: 🚀 Restart Application
+      #   run: |
+      #     cd ${{ github.workspace }}
+      #     pm2 restart backend || pm2 start dist/index.js --name backend
+      #     pm2 save
+      #     echo "✅ Backend deployment completed successfully!"
+
+# Step 5: Restart the application with FRESH environment
       - name: 🚀 Restart Application
         run: |
           cd ${{ github.workspace }}
-          pm2 restart backend || pm2 start dist/index.js --name backend
+          export PATH="$HOME/.bun/bin:$PATH"
+          pm2 delete backend || true
+          pm2 start dist/index.js --name backend --interpreter bun
           pm2 save
           echo "✅ Backend deployment completed successfully!"
