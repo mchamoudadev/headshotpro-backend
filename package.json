@@ -1,8 +1,8 @@
 {
   "name": "backend",
-  "module": "index.ts",
   "type": "module",
   "private": true,
+ "module": "src/server.ts",
   "scripts": {
     "dev": "bun --watch src/server.ts",
     "build": "tsc",

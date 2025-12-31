@@ -65,7 +65,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           pm2 delete backend || true
-          pm2 start dist/index.js --name backend --interpreter bun
+          pm2 start dist/server.js --name backend --interpreter node
           pm2 save
           echo "✅ Backend deployment completed successfully!"
             
