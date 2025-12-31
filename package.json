@@ -5,9 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "bun --watch src/server.ts",
-    "start:prod": "bun dist/server.js",
-    "build:old": "tsc && bun build src/server.ts --outdir dist --target=node",
-   "build": "bun build src/server.ts --outfile dist/index.js --target=node"
+    "build": "tsc",
+    "start:prod": "node dist/server.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
