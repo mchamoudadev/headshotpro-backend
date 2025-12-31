@@ -64,8 +64,10 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           export PATH="$HOME/.bun/bin:$PATH"
+          set -a
+          source .env
+          set +a
           pm2 delete backend || true
-          pm2 start dist/index.js --name backend --interpreter -- --env-file=.env
-
+          pm2 start dist/index.js --name backend --interpreter bun --update-env
           pm2 save
           echo "✅ Backend deployment completed successfully!"
