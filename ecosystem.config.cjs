@@ -18,6 +18,8 @@ if (fs.existsSync(envPath)) {
   });
 }
 
+console.log('Loaded env vars:', Object.keys(envConfig)); // Debug log
+
 module.exports = {
   apps: [{
     name: 'backend',
@@ -27,6 +29,7 @@ module.exports = {
     autorestart: true,
     watch: false,
     max_memory_restart: '1G',
-    env: envConfig
+    env: envConfig,
+    cwd: __dirname  // Add this to ensure correct working directory
   }]
 };
