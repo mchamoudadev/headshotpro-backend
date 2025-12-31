@@ -1171,9 +1171,104 @@ cd ~/apps
 
 ---
 
-## Part 2: Prepare Your GitHub Repository
+## Part 2: Configure Nginx (Web Server)
 
-### Step 15: Ensure .env Files Are NOT in Git 🚨
+### Step 15: Create Nginx Configuration 🌐
+
+Let's tell Nginx how to route traffic to your frontend and backend!
+
+```bash
+sudo nano /etc/nginx/sites-available/headshotprobuild
+```
+
+Paste this configuration (replace `yourdomain.com` with your actual domain):
+
+```nginx
+# =========================
+# FRONTEND (HTTP)
+# =========================
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name mchamouda.store www.mchamouda.store;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+# =========================
+# BACKEND API (HTTP)
+# =========================
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name api.mchamouda.store;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+```
+
+Save the file (Ctrl+X, Y, Enter).
+
+---
+
+### Step 16: Enable the Site
+
+```bash
+# Create symbolic link to enable the site
+sudo ln -s /etc/nginx/sites-available/headshotprobuild /etc/nginx/sites-enabled/
+
+# Remove default site
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Test configuration
+sudo nginx -t
+
+# If test passes, restart Nginx
+sudo systemctl restart nginx
+```
+
+**Understanding these commands:**
+
+- **`ln -s source destination`** = Create symbolic link (like a shortcut)
+  - `ln` = "link" command
+  - `-s` = Create symbolic (soft) link instead of hard link
+  - `source` = Original file location (/etc/nginx/sites-available/...)
+  - `destination` = Where to put the link (/etc/nginx/sites-enabled/)
+  - Nginx reads configs from `sites-enabled/`, but we edit in `sites-available/`
+
+- **`rm -f file`** = Remove (delete) file
+  - `rm` = "remove"
+  - `-f` = Force (don't ask for confirmation, don't error if file doesn't exist)
+  - Removes default Nginx page so yours is used
+
+- **`nginx -t`** = Test Nginx configuration
+  - `-t` = Test configuration file syntax
+  - Checks for errors BEFORE applying changes
+  - Always run this before restarting Nginx!
+  - Output: "syntax is ok" means success
+
+- **`systemctl restart nginx`** = Stop and start Nginx
+  - `restart` = Full stop and start (applies new config)
+  - Alternative: `reload` (smoother, but restart is safer)
+
+---
+
+## Part 3: Prepare Your GitHub Repository
+
+### Step 17: Ensure .env Files Are NOT in Git 🚨
 
 **⚠️ CRITICAL**: Before anything else, make sure your secrets are safe!
 
@@ -1218,7 +1313,7 @@ git push origin main
 
 ---
 
-### Step 16: Understanding Self-Hosted vs Cloud Runners 🤔
+### Step 18: Understanding Self-Hosted vs Cloud Runners 🤔
 
 Before we create our workflows, let's understand the two options:
 
@@ -1239,11 +1334,11 @@ Before we create our workflows, let's understand the two options:
 
 ---
 
-### Step 17: Set Up Self-Hosted Runner (GUI Method) 🖱️
+### Step 19: Set Up Self-Hosted Runner (GUI Method) 🖱️
 
 Let's set up a self-hosted runner using GitHub's friendly interface!
 
-#### Step 16a: Navigate to GitHub Settings
+#### Step 19a: Navigate to GitHub Settings
 
 1. Open your web browser and go to your GitHub repository
 2. Click the **"Settings"** tab at the top (you need admin access)
@@ -1251,7 +1346,7 @@ Let's set up a self-hosted runner using GitHub's friendly interface!
 4. Under Actions, click **"Runners"**
 5. Click the green **"New self-hosted runner"** button
 
-#### Step 16b: Choose Your Platform
+#### Step 19b: Choose Your Platform
 
 You'll see a page with different options:
 
@@ -1259,7 +1354,7 @@ You'll see a page with different options:
 2. **Architecture**: Click **"x64"**
 3. You'll see a list of commands below - keep this page open, we'll need it!
 
-#### Step 16c: SSH Into Your VPS
+#### Step 19c: SSH Into Your VPS
 
 Open your terminal (Mac) or PowerShell/Git Bash (Windows):
 
@@ -1273,7 +1368,7 @@ ssh -i ~/.ssh/github_deploy deploy@YOUR_SERVER_IP
 ssh -i ~/.ssh/github_deploy deploy@194.238.22.106
 ```
 
-#### Step 16d: Download and Install the Runner
+#### Step 19d: Download and Install the Runner
 
 **Copy the commands from the GitHub page and run them on your server.** Here's what they'll look like (your token will be different):
 
@@ -1319,7 +1414,7 @@ tar xzf ./actions-runner-linux-x64-2.311.0.tar.gz
 
 **Note:** The version number might be different - use the exact commands from your GitHub page!
 
-#### Step 16e: Configure the Runner
+#### Step 19e: Configure the Runner
 
 Now run the config command (copy from GitHub, it includes your token):
 
@@ -1336,7 +1431,7 @@ Now run the config command (copy from GitHub, it includes your token):
 
 **Success!** ✅ You'll see: "Settings Saved."
 
-#### Step 16f: Install as a Service (Runs Automatically)
+#### Step 19f: Install as a Service (Runs Automatically)
 
 This makes sure the runner starts automatically when your server reboots:
 
@@ -1353,7 +1448,7 @@ sudo ./svc.sh status
 
 **Success!** ✅ You should see: "active (running)"
 
-#### Step 16g: Verify on GitHub
+#### Step 19g: Verify on GitHub
 
 Go back to your GitHub repository:
 1. Settings → Actions → Runners
@@ -1363,7 +1458,7 @@ Go back to your GitHub repository:
 
 ---
 
-### Step 18: Create GitHub Workflow Files ⚙️
+### Step 20: Create GitHub Workflow Files ⚙️
 
 Now let's create the workflow files that will use your self-hosted runner!
 
@@ -1630,7 +1725,7 @@ chmod 600 .env
 
 ---
 
-### Step 19: Commit and Push Workflow Files 📤
+### Step 21: Commit and Push Workflow Files 📤
 
 Now let's save these workflow files to your repository!
 
@@ -1654,15 +1749,15 @@ git push origin main
 
 ---
 
-## Part 3: Configure GitHub Secrets (The Magic Part! 🪄)
+## Part 4: Configure GitHub Secrets (The Magic Part! 🪄)
 
 This is THE MOST IMPORTANT PART! This is where you securely store your environment variables so GitHub Actions can create your `.env` files automatically.
 
-### Step 20: Add Secrets to GitHub (Using GUI) 🔐
+### Step 22: Add Secrets to GitHub (Using GUI) 🔐
 
 Let's add your secrets using GitHub's friendly web interface!
 
-#### Step 19a: Navigate to GitHub Secrets
+#### Step 22a: Navigate to GitHub Secrets
 
 1. **Open your web browser** and go to your GitHub repository
 2. Click the **"Settings"** tab at the top (between "Insights" and "Security")
@@ -1672,7 +1767,7 @@ Let's add your secrets using GitHub's friendly web interface!
 
 ---
 
-#### Step 19b: Understanding What Secrets We Need
+#### Step 22b: Understanding What Secrets We Need
 
 We need **TWO main secrets** for the self-hosted runner setup:
 
@@ -1687,7 +1782,7 @@ We need **TWO main secrets** for the self-hosted runner setup:
 
 ---
 
-#### Step 19c: Add BACKEND_ENV Secret
+#### Step 22c: Add BACKEND_ENV Secret
 
 **Let's add the backend secret first!**
 
@@ -1754,7 +1849,7 @@ FRONTEND_URL=https://yourdomain.com
 
 ---
 
-#### Step 19d: Add FRONTEND_ENV Secret
+#### Step 22d: Add FRONTEND_ENV Secret
 
 Now let's add the frontend environment variables!
 
@@ -1790,7 +1885,7 @@ NEXT_PUBLIC_ENVIRONMENT=production
 
 ---
 
-### Step 19e: Verify Your Secrets ✅
+### Step 22e: Verify Your Secrets ✅
 
 Let's make sure everything is set up correctly!
 
@@ -1804,11 +1899,11 @@ Let's make sure everything is set up correctly!
 
 ---
 
-## Part 4: Initial Deployment to VPS 🚀
+## Part 5: Initial Deployment to VPS 🚀
 
 Now that everything is configured, let's get your app running for the first time!
 
-### Step 21: Clone Your Repository to VPS 📥
+### Step 23: Clone Your Repository to VPS 📥
 
 **SSH into your VPS:**
 
@@ -1855,7 +1950,7 @@ git clone https://github.com/johndoe/myproject.git
 
 ---
 
-### Step 22: Manually Create .env Files (First Time Only) 📝
+### Step 24: Manually Create .env Files (First Time Only) 📝
 
 For the very first deployment, we need to manually create the `.env` files on the server. After this, GitHub Actions will handle it automatically every time you push code!
 
@@ -1905,7 +2000,7 @@ Paste your backend environment variables (same content you put in `BACKEND_ENV` 
 
 ---
 
-### Step 23: Build and Start Frontend 🎨
+### Step 25: Build and Start Frontend 🎨
 
 Let's get your beautiful frontend running!
 
@@ -1927,7 +2022,7 @@ pm2 list
 
 ---
 
-### Step 24: Build and Start Backend 🔧
+### Step 26: Build and Start Backend 🔧
 
 Now let's get your backend API up and running!
 
@@ -1951,7 +2046,7 @@ You should see both apps running!
 
 ---
 
-### Step 25: Make PM2 Start on Server Reboot 🔄
+### Step 27: Make PM2 Start on Server Reboot 🔄
 
 This ensures your apps automatically start if your server restarts!
 
@@ -1984,135 +2079,6 @@ Both apps should still be running!
 
 ---
 
-## Part 5: Configure Nginx (Web Server)
-
-### Step 26: Create Nginx Configuration 🌐
-
-Let's tell Nginx how to route traffic to your frontend and backend!
-
-```bash
-sudo nano /etc/nginx/sites-available/headshotprobuild
-```
-
-Paste this configuration (replace `yourdomain.com` with your actual domain):
-
-```nginx
-# Redirect HTTP to HTTPS
-server {
-    listen 80;
-    listen [::]:80;
-    server_name yourdomain.com www.yourdomain.com api.yourdomain.com;
-
-    # Allow Let's Encrypt verification
-    location /.well-known/acme-challenge/ {
-        root /var/www/html;
-    }
-
-    # Redirect all other HTTP to HTTPS
-    location / {
-        return 301 https://$host$request_uri;
-    }
-}
-
-# Frontend HTTPS (yourdomain.com + www.yourdomain.com)
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-
-    server_name yourdomain.com www.yourdomain.com;
-
-    # SSL certificates (will be added by Certbot)
-    # ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    # ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-
-    # Proxy to Next.js app on port 3000
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-
-# Backend API HTTPS (api.yourdomain.com)
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-
-    server_name api.yourdomain.com;
-
-    # SSL certificates (will be added by Certbot)
-    # ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    # ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-
-    # Increase upload size for images
-    client_max_body_size 50M;
-
-    # Proxy to Backend API on port 8000
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-Save the file (Ctrl+X, Y, Enter).
-
----
-
-### Step 27: Enable the Site
-
-```bash
-# Create symbolic link to enable the site
-sudo ln -s /etc/nginx/sites-available/headshotprobuild /etc/nginx/sites-enabled/
-
-# Remove default site
-sudo rm -f /etc/nginx/sites-enabled/default
-
-# Test configuration
-sudo nginx -t
-
-# If test passes, restart Nginx
-sudo systemctl restart nginx
-```
-
-**Understanding these commands:**
-
-- **`ln -s source destination`** = Create symbolic link (like a shortcut)
-  - `ln` = "link" command
-  - `-s` = Create symbolic (soft) link instead of hard link
-  - `source` = Original file location (/etc/nginx/sites-available/...)
-  - `destination` = Where to put the link (/etc/nginx/sites-enabled/)
-  - Nginx reads configs from `sites-enabled/`, but we edit in `sites-available/`
-
-- **`rm -f file`** = Remove (delete) file
-  - `rm` = "remove"
-  - `-f` = Force (don't ask for confirmation, don't error if file doesn't exist)
-  - Removes default Nginx page so yours is used
-
-- **`nginx -t`** = Test Nginx configuration
-  - `-t` = Test configuration file syntax
-  - Checks for errors BEFORE applying changes
-  - Always run this before restarting Nginx!
-  - Output: "syntax is ok" means success
-
-- **`systemctl restart nginx`** = Stop and start Nginx
-  - `restart` = Full stop and start (applies new config)
-  - Alternative: `reload` (smoother, but restart is safer)
-
----
 
 ## Part 6: DNS Configuration
 
