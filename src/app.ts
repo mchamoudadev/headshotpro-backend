@@ -77,6 +77,7 @@ app.get('/health', apiRateLimitConfig.general, (req, res, next) => {
     res.json({
         status: "ok",
         timeStamp: new Date().toISOString(),
+        message: "Backend is running",
     })
 })
 

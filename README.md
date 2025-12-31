@@ -1485,8 +1485,7 @@ name: Deploy Backend to VPS
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
+
 
 jobs:
   build:
@@ -1504,26 +1503,12 @@ jobs:
       # Step 2: 🔐 CREATE .env FILE FROM GITHUB SECRETS (THE MAGIC!)
       - name: 🔐 Create .env file from GitHub Secrets
         run: |
-          cd ${{ github.workspace }}/backend
+          cd ${{ github.workspace }}
           echo "${{ secrets.BACKEND_ENV }}" > .env
           chmod 600 .env
           echo "✅ .env file created successfully"
       
-      # Step 3: Check NODE_ENV in .env file
-      - name: ✅ Verify NODE_ENV is production
-        run: |
-          cd ${{ github.workspace }}/backend
-          if [ ! -f ".env" ]; then
-            echo "❌ Error: .env file not found"
-            exit 1
-          fi
-          if ! grep -q "^NODE_ENV=production" .env; then
-            echo "⚠️ Warning: NODE_ENV should be set to production"
-          else
-            echo "✅ NODE_ENV is correctly set to production"
-          fi
-      
-      # Step 4: Install Bun
+      # Step 3: Install Bun
       - name: 🔧 Install Bun
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
@@ -1534,27 +1519,27 @@ jobs:
           fi
           bun --version
       
-      # Step 5: Install dependencies
+      # Step 4: Install dependencies
       - name: 📦 Install dependencies with Bun
         run: |
-          cd ${{ github.workspace }}/backend
+          cd ${{ github.workspace }}
           export PATH="$HOME/.bun/bin:$PATH"
           bun install
       
-      # Step 6: Build the project
+      # Step 5: Build the project
       - name: 🏗️ Build the project
         run: |
-          cd ${{ github.workspace }}/backend
+          cd ${{ github.workspace }}
           export PATH="$HOME/.bun/bin:$PATH"
           bun run build
       
-      # Step 7: Restart the application
+      # Step 6: Restart the application
       - name: 🚀 Restart Application
         run: |
-          cd ${{ github.workspace }}/backend
+          cd ${{ github.workspace }}
           pm2 restart backend || pm2 start dist/index.js --name backend
           pm2 save
-          echo "✅ Backend deployment completed successfully!"
+          echo "✅ Backend deployment completed successfully!"****
 ```
 
 **Key Points to Notice:**
