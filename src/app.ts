@@ -77,7 +77,7 @@ app.get('/health', apiRateLimitConfig.general, (req, res, next) => {
     res.json({
         status: "ok",
         timeStamp: new Date().toISOString(),
-        message: "Backend is running with PM2 Process Manager and Node.js version 24.x 😍",
+        message: "Backend is running with PM2 Process Manager and Node.js version 24.x 😍 ${config.env}",
         frontendUrl: config.frontendUrl,
         env: config.env,
     })
