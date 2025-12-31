@@ -5,7 +5,7 @@
   "module": "src/server.ts",
   "scripts": {
     "dev": "bun --watch src/server.ts",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start:prod": "node dist/server.js"
   },
   "devDependencies": {
