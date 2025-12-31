@@ -2,7 +2,7 @@
   "name": "backend",
   "type": "module",
   "private": true,
- "module": "src/server.ts",
+  "module": "src/server.ts",
   "scripts": {
     "dev": "bun --watch src/server.ts",
     "build": "tsc",
@@ -18,7 +18,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/nodemailer": "^7.0.4",
-    "@types/stripe": "^8.0.417"
+    "@types/stripe": "^8.0.417",
+    "tsc-alias": "^1.8.16"
   },
   "peerDependencies": {
     "typescript": "^5"
