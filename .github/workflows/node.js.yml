@@ -64,9 +64,10 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           export PATH="$HOME/.bun/bin:$PATH"
-          set -a
-          source .env
-          set +a
+          
+          # Export all env vars from .env file
+          export $(grep -v '^#' .env | xargs)
+          
           pm2 delete backend || true
           pm2 start dist/index.js --name backend --interpreter bun --update-env
           pm2 save
