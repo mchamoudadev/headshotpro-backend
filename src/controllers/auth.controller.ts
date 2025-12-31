@@ -9,6 +9,7 @@ const cookieOptions = {
   secure: config.env === "production",
   sameSite: "lax" as const,
   path: "/",
+  domain: config.env === "production" ? ".mchamouda.store" : undefined, // Add this line
 };
 
 export const register = async (req: Request, res: Response) => {
