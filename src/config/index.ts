@@ -22,8 +22,7 @@ export const config = {
 
   database: {
     url: process.env.DATABASE_URL || "mongodb://localhost:27017/headshotpro",
-    // productionUrl: process.env.PRODUCTION_DATABASE_URL || "mongodb://localhost:27017/headshotpro",
-    productionUrl: "mongodb+srv://mchamuuda_db_user:XxmEiwWqwVpmjXaf@cluster0.gki7lde.mongodb.net/?appName=Cluster0?retryWrites=true&w=majority&appName=headshotpro",
+    productionUrl: process.env.PRODUCTION_DATABASE_URL || "mongodb://localhost:27017/headshotpro"
   },
   frontendUrl:
     process.env.NODE_ENV === "production"

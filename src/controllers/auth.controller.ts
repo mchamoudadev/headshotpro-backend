@@ -7,7 +7,7 @@ import type { Request, Response } from "express";
 const cookieOptions = {
   httpOnly: true,
   secure: config.env === "production",
-  sameSite: "lax" as const,
+  sameSite:  config.env === "production" ? ("none" as const) : ("lax" as const),
   path: "/",
   domain: config.env === "production" ? ".mchamouda.store" : undefined, 
 };
