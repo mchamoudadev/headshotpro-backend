@@ -2,7 +2,28 @@ import { paymentService, PaymentService, stripeService } from "@/services/paymen
 import { AppError, NotFoundError } from "@/util/errors";
 import { logger } from "@/util/logger";
 import { errorResponse, successResponse } from "@/util/response";
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
+
+
+const courseInfo = [
+    {
+        id: 1,
+        title: "Headshot Pro Build",
+        description: "Learn how to build your own headshot pro build",
+    },
+    {
+        id: 2,
+        title: "HTML and CSS",
+        description: "Learn how to build your own HTML and CSS",
+    },
+    {
+        id: 3,
+        title: "React",
+        description: "Learn how to build your own React",
+    },
+]
+
+
 
 export const getCreditPackages = async (req: Request, res: Response) => {
 
@@ -70,4 +91,14 @@ export const getPaymentHistory = async (req: Request, res: Response) => {
 
     return successResponse(res, "Payment history fetched successfully", orders);
 
+}
+
+
+export const getCourseById = async (req: Request, res: Response) => {
+
+    const { id } = req.params;
+
+    const course = courseInfo.find((course) => course.id === Number(id));
+
+    return successResponse(res, "Course fetched successfully", course);
 }

@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { CreditPackage } from '@/models';
 import { config } from '@/config';
 
+
+
 const packages = [
   { name: 'Starter', credits: 10, price: 9.99, description: 'Perfect for trying out AI headshots', bonus: 0, popular: false },
   { name: 'Popular', credits: 25, price: 19.99, description: 'Most popular choice', bonus: 5, popular: true },
@@ -11,7 +13,9 @@ const packages = [
 
 async function seed() {
   try {
-    await mongoose.connect(`${config.database.productionUrl}`);
+
+    
+    await mongoose.connect(``);
     
     await CreditPackage.deleteMany({});
     const result = await CreditPackage.insertMany(packages.map(p => ({ ...p, isActive: true })));
