@@ -1,11 +1,7 @@
 import { paymentController } from "@/controllers";
-import { authenticate } from "@/middleware";
 import { Router } from "express";
 
 const router = Router();
-
-
-// public routes
 
 // Temporray use paymentController for now
 
